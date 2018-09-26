@@ -1,0 +1,26 @@
+plugins {
+  id 'java'
+  id 'maven'
+  id 'application'
+}
+repositories {
+  mavenCentral() // main repository for maven dependencies
+  jcenter() // for MaryTTS voices
+  maven { url "http://github.com/rosjava/rosjava_mvn_repo/raw/master" } // for ROSJava
+  maven { url "https://jitpack.io" } // just-in-time maven resouces for DialogOS
+}
+
+// pull in the two dependencies: on DialogOS that can be controlled via 
+dependencies {
+  runtime group:'com.github.dialogos-project', name:'dialogos', version: 'v2.0.0'
+  runtime group:'com.github.dialogos-project', name:'dialogos-ros', version: 'master-SNAPSHOT'
+  runtime group:'com.github.dialogos-project', name:'dialogos-plugin-ros', version: 'master-SNAPSHOT'
+}
+def version = '1.0'
+mainClassName = 'com.clt.dialogos.DialogOS'
+
+task runViaROS(type:JavaExec) {
+  classpath = sourceSets.main.runtimeClasspath
+  main = 'org.ros.RosRun'
+  args = ["app.dialogos.ros.DialogOSNode"]
+}
