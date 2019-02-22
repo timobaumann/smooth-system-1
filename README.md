@@ -1,29 +1,49 @@
 # A callable robot
 
-This setup demonstrates a system in which a robot is called on ("come here"), executes an action (approach the caller), and confirms its action ("I am now with you").
+This setup demonstrates a system in which a robot is called on ("come here"), 
+executes an action (approach the caller), performs some (semi-incremental) 
+dialog while the action is going on, and confirms its action once it is 
+informed about the completion ("I am now with you").
 
-The purpose of this demo system is to show the interaction of the dialog and robot components via ROS. Given this purpose, the robot is completely simulated and confirms that approach has finished after a while.
+The purpose of this demo system is to show the interaction of the dialog and 
+robot components via ROS. Given this purpose, the robot is completely simulated, 
+periodically sends messages about the expected remaining duration of the action 
+and eventually confirms that approach has finished.
 
 The information flow is as follows:
 
 Startup
- → dialog is triggered by user request
+ → dialog is triggered by user request ("robot, come here")
  → dialog publishes action request
  → robot moves ; meanwhile, dialog waits for robot information
- → robot publishes completion of approach
+ → robot publishes expectation of remaining time
+ → if time remains to talk about some topic, the dialog system talks about this
+ → the above two points repeat
+ → eventually, robot publishes completion of approach
  → dialog is triggered by completion of approach
  → dialog confirms completion to user via speech.
 
-In this simulation, there is no robot and it does not move. The "robot" merely waits a random amount of time (5-10 seconds) and then confirms that it has completed the approach.
+In this simulation, there is no robot and it does not move. The "robot" merely 
+waits a random amount of time (5-10 seconds), sends updates every second and 
+then confirms that it has completed the approach.
 
 ## DialogOS ROS nodes and topics
 
 DialogOS may typically be visible as 2 ROS nodes during execution: 
 
-* one ROS node that _enables running_ the dialog system itself (load dialog model, start dialog, abort dialog). The name of this node is `DialogOS_Control` and it subscribes to the `DialogOS_cmd` topic.
-* one ROS node that appears _during execution_ of a dialog model and that enables the interaction of dialog actions and other ROS components. The name of this node is `DialogOS_plugin`; the topics that it uses are determined by the dialog model.
+* one ROS node that _enables running_ the dialog system itself (load dialog 
+model, start dialog, abort dialog). The name of this node is `DialogOS_Control` 
+and it subscribes to the `DialogOS_cmd` topic.
+* one ROS node that appears _during execution_ of a dialog model and that 
+enables the interaction of dialog actions and other ROS components. The name 
+of this node is `DialogOS_plugin`; the topics that it uses are determined by 
+the dialog model.
 
-It is possible to only run the dialog system via ROS but not have any ROS interactions within the dialog system (e.g. because the dialog does not involve any interaction with the remainder of the system). It is also possible to manually initiate the dialog via DialogOS and only have the dialog model interact with ROS (this may be simpler when testing and refining the dialog).
+It is possible to only run the dialog system via ROS but not have any 
+ROS interactions within the dialog system (e.g. because the dialog does not 
+involve any interaction with the remainder of the system). It is also possible 
+to manually initiate the dialog via DialogOS and only have the dialog model 
+interact with ROS (this may be simpler when testing and refining the dialog).
 
 ## Robot simulation
 
@@ -93,11 +113,11 @@ via `rostopic echo`.
 
 ## DialogOS dialog model
 
-Dialog models access ROS via specific DialogOS nodes, in particular `ROSOutputNode`s
-for publishing messages onto arbitrary topics, and `ROSInputNode`s for receiving 
-messages on arbitrary topics. Our simple example first uses one output node and 
-later uses an input node. The input is received into variable. Notice that we don't
-actually check the content of the input -- this should be done for a more complete 
-example, using DialogOS-Script.
+Dialog models access ROS via specific DialogOS nodes, in particular 
+`ROSOutputNode`s for publishing messages onto arbitrary topics, and 
+`ROSInputNode`s for receiving messages on arbitrary topics. Our simple example 
+first uses one output node and later uses an input node. The input is received 
+into variable. Notice that we don't actually check the content of the input -- 
+this should be done for a more complete example, using DialogOS-Script.
 
 
