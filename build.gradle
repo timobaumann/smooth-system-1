@@ -12,12 +12,17 @@ repositories {
 
 // pull in the two dependencies: on DialogOS that can be controlled via 
 dependencies {
-  runtime group:'com.github.dialogos-project', name:'dialogos', version: 'v2.0.0'
-  runtime group:'com.github.dialogos-project', name:'dialogos-ros', version: 'master-SNAPSHOT'
-  runtime group:'com.github.dialogos-project', name:'dialogos-plugin-ros', version: '55f4cc8099'
+  runtime(group:'com.github.dialogos-project', name:'dialogos', version: '-SNAPSHOT') {
+    force = true
+  }
+  runtime group:'com.github.dialogos-project', name:'dialogos-ros', version: '8f455675fd'
+  runtime group:'com.github.dialogos-project', name:'dialogos-plugin-ros', version: '2.1.1'
 }
 def version = '1.0'
 mainClassName = 'com.clt.dialogos.DialogOS'
+run {
+  args = ["model.dos"]
+}
 
 task runViaROS(type:JavaExec) {
   classpath = sourceSets.main.runtimeClasspath
